@@ -301,3 +301,7 @@ for i in tqdm(range(1, 109)):
 
 correct_match_score_cosine, correct_match_score_manhattan = iris_matching(train_df, test_df)
 performance_evaluation(correct_match_score_cosine, correct_match_score_manhattan)
+
+
+# cosine similarity correct recognition rate: 62.27%
+# manhattan distance correct recognition rate: 61.34%
