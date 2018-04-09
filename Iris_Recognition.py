@@ -1,3 +1,11 @@
+import pandas as pd
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+import math
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.neighbors import KNeighborsClassifier
+
 def iris_localization(eye):
 
     # binarizing the image to get the coordinates of the pupil and remove some eyelash noise
