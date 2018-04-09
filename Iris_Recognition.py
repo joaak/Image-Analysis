@@ -21,19 +21,23 @@ def iris_localization(eye):
     # horizontal and vertical projection of the original image to get the coordinates of the centre of the pupil
     h_projection_2 = np.array([x/255/rows for x in eye.sum(axis=0)])
     v_projection_2 = np.array([x/255/cols for x in eye.sum(axis=1)])
-
     approximate_centroid_2 = (np.argmin(h_projection_2), np.argmin(v_projection_2))
 
     # since both projections are prone to errors (eyelash noise etc.) we choose to take the maximum of the two estimates
     Xp = max(approximate_centroid_1[0], approximate_centroid_2[0])
     Yp = max(approximate_centroid_1[1], approximate_centroid_2[1])
+    
+    # now we take a 160 x 160 frame centered around the pupil to reduce the image size and speed up computation
     crop_eye = eye[Yp-80:Yp+80, Xp-80:Xp+80]
 
+    # create a copy of the cropped eye to draw the pupil circle on (for sanity check during execution)
     crop_eye_copy = crop_eye.copy()
 
     # we run hough circles on the original image to get an estimate of the radius of the pupil circle
+    # set parameters in a way to ensure only one most prominent circle is detected in the image
     pupil_circles = cv2.HoughCircles(crop_eye_copy, cv2.HOUGH_GRADIENT, 5.1, 300, minRadius = 40, maxRadius=50, param2=50)
 
+    # draw pupil circle on the image
     if pupil_circles is not None:
         # convert the (x, y) coordinates and radius of the circles to integers
         pupil_circles = np.round(pupil_circles[0, :]).astype("int")
@@ -43,17 +47,19 @@ def iris_localization(eye):
             # corresponding to the center of the circle
             cv2.circle(crop_eye_copy, (x, y), r, color=(0, 255, 0), thickness=3)
 
+    # create a copy of the eye image for future changes 
     eye_copy = eye.copy()
 
     # run canny edge detection on the original image
     eye_edges = cv2.Canny(eye_copy, threshold1 = 50, threshold2 = 70)
 
+    # the hough circles algorithm returns both types of array formats, so we ensure that we don't get an error because of that
     try:
         Rp = int(pupil_circles[0][2])
     except:
         Rp = int(pupil_circles[0][0][2])
 
-    # remove the eyelash, pupil and other noise using the information from the radius of the pupil
+    # remove the eyelash, pupil and other noise in the canny edge detection image using the information from the cioordinates and radius of the pupil
     eye_edges[Yp-(Rp+30):Yp+(Rp+30), Xp-(Rp+30):Xp+(Rp+30)] = 1
     for i in range(eye_edges.shape[0]):
         for j in range(eye_edges.shape[1]):
@@ -62,9 +68,10 @@ def iris_localization(eye):
             if j < Xp-(Rp+70) or j > Xp+(Rp+70):
                  eye_edges[i][j] = 1
 
-    # run hough circle on the new image to get the location of the iris in the image
+    # run hough circle on the new less noisy canny edge image to get the location of the iris in the image
     iris_circles = cv2.HoughCircles(eye_edges, cv2.HOUGH_GRADIENT, 6.2, 300, minRadius=90, maxRadius=Rp+70, param2=250)
 
+    # plot the iris circle on the copy of the eye image (for sanity check during execution)
     if iris_circles is not None:
         # convert the (x, y) coordinates and radius of the circles to integers
         iris_circles = np.round(iris_circles[0, :]).astype("int")
@@ -74,8 +81,10 @@ def iris_localization(eye):
             # corresponding to the center of the circle
             cv2.circle(eye_copy, (x, y), r, color=(0, 255, 0), thickness=3)
 
-    #print(iris_circles)
+    # print eye_copy with the iris circle drawn to see how the localization is doing
+    # print(iris_circles)
 
+    # save the coordinates and radius of the iris  
     (Xi, Yi, Ri) = iris_circles[0]
 
     # return the coordinate and radius information of the iris and the pupil
@@ -119,7 +128,7 @@ def image_enhancement(eye):
     norm_eye = norm_eye[0:48]
     return norm_eye
 
-# define the functions as given in Li Ma's paper
+# define the feature extraction functions as given in Li Ma's paper
 
 def m(x, y, f):
     val = np.cos(2*np.pi*f*math.sqrt(x ** 2 + y ** 2))
@@ -186,8 +195,8 @@ def get_feature(norm_eye):
 
     # the length of this vector is 1536
 
-# after getting the training and test data, we need to reduce their dimenshionality
-# we can do that by using fisher linear discriminant
+# after getting the training and test data, we need to reduce their dimensionality
+# we can do that by using fisher linear discriminant, which is a well-suited algorithm for this problem
 
 def iris_matching(train_df, test,_df):
     y_train = train_df[1536]
@@ -242,7 +251,7 @@ def iris_matching(train_df, test,_df):
 
     return(correct_match_score_cosine, correct_match_score_manhattan)
 
-def performance_evaluation(correct_match_score_cosine, correct_match_score_manhattan)
+def performance_evaluation(correct_match_score_cosine, correct_match_score_manhattan):
 
     plt.plot(correct_match_score_cosine)
     plt.xlabel('Number of Features in Cosine Similarity')
