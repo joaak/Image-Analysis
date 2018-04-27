@@ -20,10 +20,10 @@ The goal is to fit the image into a standard template brain.
 
 The burring of the image done by convolution in the spatial domain (SPM uses Gaussian kernel). Smoothing is done to make data more normally distributed and increase validity of statistical testing.
 
-## Drawbacks:
+## Drawbacks
 
 More parameters could have been tested to check for better results.
 
-## Result:
+## Result
 
 From all the different fMRI images we can draw conclusions about the parts of brain which respond to auditory signals.
