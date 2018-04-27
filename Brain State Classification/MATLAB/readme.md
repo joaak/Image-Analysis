@@ -1,4 +1,4 @@
-# Implmentation of SPM Manual Chapter 30
+# Implementation of SPM Manual Chapter 30
 
 ## Preprocessing Steps
 
