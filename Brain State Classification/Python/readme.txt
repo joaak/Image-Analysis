@@ -12,6 +12,6 @@ Gradient Boosting Classifier
 2. Brain Mask Threshold 300 + GBC (n_estimators = 100) + PCA 92 n_components gave an accuracy ~ 72%.
 3. Brain Mask Threshold 300 + GBC (n_estimators = 500) + PCA 92 n_components gave an accuracy ~ 77%.
 4. Brain Mask Threshold 100 + GBC (n_estimators = 100) + PCA 92 n_components gave an accuracy ~ 62%.
-5. Brain Mask Threshold 300 + SVM (c=1, gamma=1/n_features) + no PCA ~ 80%.
+5. Brain Mask Threshold 300 + GBC (n_estimators = 100) + no PCA ~ 80%.
 
 Best Trail: Brain Mask Threshold 300 + SVM (c=1, gamma=1/n_features) + no PCA ~ 80%.
