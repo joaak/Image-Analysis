@@ -1,3 +1,5 @@
+#Brain State Classification using Machine Learning Models
+
 SVM
 
 1. Brain Mask Threshold 300 + SVM (c=1, gamma=1/n_features) + PCA 50 n_components gave an accuracy ~ 45%.
