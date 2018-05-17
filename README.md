@@ -46,3 +46,7 @@ There is still some imprecision as the eyelashes and the image noise have not be
 1. Using the MATLAB sofware SPM to identify the brain regions that repond to auditory signals based on brain images. 
 2. Using Python for brain state classification challenges. 
 
+## MNIST Handwritten Digit Recognition using Convolutional Neural Networks
+
+Building a classifier that learns to identify handwritten digits using convolutional neural networks. 
+
